@@ -1,15 +1,10 @@
 const bcrypt = require('bcrypt');
+const { connect } = require('../connect');
+const { requireAuth, requireAdmin } = require('../middleware/auth');
 
-const {
-  requireAuth,
-  requireAdmin,
-} = require('../middleware/auth');
+const { getUsers } = require('../controller/users');
 
-const {
-  getUsers,
-} = require('../controller/users');
-
-const initAdminUser = (app, next) => {
+const initAdminUser = async (app, next) => {
   const { adminEmail, adminPassword } = app.get('config');
   if (!adminEmail || !adminPassword) {
     return next();
@@ -21,11 +16,39 @@ const initAdminUser = (app, next) => {
     roles: { admin: true },
   };
 
-  // TODO: Create admin user
-  // First, check if adminUser already exists in the database
-  // If it doesn't exist, it needs to be saved
+  try {
+    const db = await connect();
+    const usersCollection = db.collection('user');
 
-  next();
+    const adminUserExists = await usersCollection.findOne({
+      email: adminEmail,
+    });
+
+    if (!adminUserExists) {
+      await usersCollection.insertOne(adminUser);
+    } else {
+      console.error('El  administrador ya existe');
+    }
+
+    /* const con = db.connect();
+  const col = con.collection('users');
+  const user = col.findOne({ adminEmail });
+  if (!user) {
+    col.insertOne(adminUser);
+  }
+ */
+    // TODO: Create admin user
+    // First, check if adminUser already exists in the database
+    // If it doesn't exist, it needs to be saved
+
+    next();
+  } catch (error) {
+    // Manejar el error de la consulta a la base de datos
+    console.error(
+      error,
+    );
+    next();
+  }
 };
 
 /*
@@ -84,21 +107,17 @@ const initAdminUser = (app, next) => {
  */
 
 module.exports = (app, next) => {
-
   app.get('/users', requireAdmin, getUsers);
 
-  app.get('/users/:uid', requireAuth, (req, resp) => {
-  });
+  app.get('/users/:uid', requireAuth, (req, resp) => {});
 
   app.post('/users', requireAdmin, (req, resp, next) => {
     // TODO: Implement the route to add new users
   });
 
-  app.put('/users/:uid', requireAuth, (req, resp, next) => {
-  });
+  app.put('/users/:uid', requireAuth, (req, resp, next) => {});
 
-  app.delete('/users/:uid', requireAuth, (req, resp, next) => {
-  });
+  app.delete('/users/:uid', requireAuth, (req, resp, next) => {});
 
   initAdminUser(app, next);
 };
