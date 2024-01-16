@@ -17,7 +17,7 @@ const initAdminUser = async (app, next) => {
   };
 
   try {
-    const db = await connect();
+    const db = connect();
     const usersCollection = db.collection('user');
 
     const adminUserExists = await usersCollection.findOne({
@@ -30,17 +30,6 @@ const initAdminUser = async (app, next) => {
       console.error('El  administrador ya existe');
     }
 
-    /* const con = db.connect();
-  const col = con.collection('users');
-  const user = col.findOne({ adminEmail });
-  if (!user) {
-    col.insertOne(adminUser);
-  }
- */
-    // TODO: Create admin user
-    // First, check if adminUser already exists in the database
-    // If it doesn't exist, it needs to be saved
-
     next();
   } catch (error) {
     // Manejar el error de la consulta a la base de datos
@@ -50,6 +39,16 @@ const initAdminUser = async (app, next) => {
     next();
   }
 };
+  /* const con = db.connect();
+  const col = con.collection('users');
+  const user = col.findOne({ adminEmail });
+  if (!user) {
+    col.insertOne(adminUser);
+  }
+ */
+// TODO: Create admin user
+// First, check if adminUser already exists in the database
+// If it doesn't exist, it needs to be saved
 
 /*
  * Español:

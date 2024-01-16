@@ -8,7 +8,7 @@ const { connect } = require('./connect');
 
 const { port, secret } = config;
 const app = express();
-connect();
+// connect();
 
 app.set('config', config);
 app.set('pkg', pkg);

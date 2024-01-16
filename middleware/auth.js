@@ -14,20 +14,29 @@ module.exports = (secret) => (req, resp, next) => {
   }
 
   jwt.verify(token, secret, (err, decodedToken) => {
+    console.log(decodedToken.uid);
     if (err) {
       return next(403);
     }
+    req.userId = decodedToken.uid;
+    req.userRole = decodedToken.role;
+
+    
 
     // TODO: Verify user identity using `decodeToken.uid`
   });
+  next();
 };
 
 module.exports.isAuthenticated = (req) => (
+  
+
   // TODO: Decide based on the request information whether the user is authenticated
   false
 );
 
 module.exports.isAdmin = (req) => (
+
   // TODO: Decide based on the request information whether the user is an admin
   false
 );
