@@ -19,7 +19,7 @@ module.exports = (app, nextMain) => {
       console.log(userValid._id);
 
       if (userValid) {
-        const tokenIs = jwt.sign({ uid: userValid.id, email: userValid.email, role: userValid.role }, secret, { expiresIn: '1h' });
+        const tokenIs = jwt.sign({ uid: userValid._id, email: userValid.email, role: userValid.role }, secret, { expiresIn: '1h' });
 
         resp.json({ 'acsses token': tokenIs });
       } else {

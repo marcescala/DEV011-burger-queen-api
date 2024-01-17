@@ -18,10 +18,9 @@ module.exports = (secret) => (req, resp, next) => {
     if (err) {
       return next(403);
     }
-    req.userId = decodedToken.uid;
+    // req.userId = decodedToken.uid;
     req.userRole = decodedToken.role;
-
-    
+    return next();
 
     // TODO: Verify user identity using `decodeToken.uid`
   });
@@ -29,16 +28,15 @@ module.exports = (secret) => (req, resp, next) => {
 };
 
 module.exports.isAuthenticated = (req) => (
-  
 
   // TODO: Decide based on the request information whether the user is authenticated
-  false
+  true
 );
 
 module.exports.isAdmin = (req) => (
 
   // TODO: Decide based on the request information whether the user is an admin
-  false
+  true
 );
 
 module.exports.requireAuth = (req, resp, next) => (
