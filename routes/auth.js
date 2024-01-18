@@ -14,9 +14,9 @@ module.exports = (app, nextMain) => {
       const collection = db.collection('user');
 
       const userValid = await collection.findOne({ email }, { password });
-      console.log(userValid);
+      console.log(userValid.password);
 
-      console.log(userValid._id);
+      // console.log(userValid._id);
 
       if (userValid) {
         const tokenIs = jwt.sign({ uid: userValid._id, email: userValid.email, role: userValid.role }, secret, { expiresIn: '1h' });
