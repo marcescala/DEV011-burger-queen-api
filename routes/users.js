@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const { connect } = require('../connect');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 
-const { getUsers } = require('../controller/users');
+const { getUsers, postUsers } = require('../controller/users');
 
 const initAdminUser = async (app, next) => {
   const { adminEmail, adminPassword } = app.get('config');
@@ -12,8 +12,8 @@ const initAdminUser = async (app, next) => {
 
   const adminUser = {
     email: adminEmail,
-    role: 'admin',
     password: bcrypt.hashSync(adminPassword, 10),
+    role: 'admin',
   };
 
   try {
@@ -108,10 +108,10 @@ const initAdminUser = async (app, next) => {
 module.exports = (app, next) => {
   app.get('/users', requireAdmin, getUsers);
 
-  app.get('/users/:uid', requireAuth, (req, resp) => {});
-
-  app.post('/users', requireAdmin, (req, resp, next) => {
+  app.post('/users', requireAdmin, postUsers, (req, resp, next) => {
     // TODO: Implement the route to add new users
+    console.log('aca esta el post');
+    resp.json({ ok: '1' });
   });
 
   app.put('/users/:uid', requireAuth, (req, resp, next) => {});

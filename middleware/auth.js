@@ -29,10 +29,12 @@ module.exports = (secret) => (req, resp, next) => {
 
 module.exports.isAuthenticated = (req) => {
   const userId = req.userId ? req.userId.toString() : null;
+  console.log(userId, 'midelware');
   if (userId) {
-    // console.log('usuario autenticado midelware', userId);
+    console.log('Usuario autenticado:', userId);
     return true;
   }
+  console.log('Usuario no autenticado');
   return false;
 
   // TODO: Decide based on the request information whether the user is authenticated
@@ -41,7 +43,7 @@ module.exports.isAuthenticated = (req) => {
 module.exports.isAdmin = (req) => {
   const userRole = req.userRole ? req.userRole.toString() : null;
   if (userRole === 'admin') {
-    // console.log('es administrador midelware', userRole);
+    console.log('es administrador midelware', userRole);
     return true;
   }
   return false;
