@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-// const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 const config = require('../config');
 const { connect } = require('../connect');
 
@@ -9,24 +9,34 @@ module.exports = (app, nextMain) => {
   app.post('/login', async (req, resp, next) => {
     const { email, password } = req.body;
 
+    
+
     try {
       const db = connect();
       const collection = db.collection('user');
 
-      const userValid = await collection.findOne({ email }, { password });
-      console.log(userValid.password);
+      const userValid = await collection.findOne({ email });
+      console.log(userValid);
+      
+      
+      if (!email || !password){
+        console.log('se necesita un email y un password');
+        return resp.status(400).json({ error: 'se necesita un email y un password' });
+      }
 
-      // console.log(userValid._id);
+      const authPassword = await bcrypt.compare(password, userValid.password);
+     
 
-      if (userValid) {
+      if (authPassword) {
         const tokenIs = jwt.sign({ uid: userValid._id, email: userValid.email, role: userValid.role }, secret, { expiresIn: '1h' });
 
         resp.json({ 'acsses token': tokenIs });
       } else {
-        next(401);
+        console.log('el password no coincide');
+        return resp.status(401).json({ error: 'el password no coincide' });
       }
 
-      // const authPassword = await bcrypt.compare(password, userValid.password);
+      // 
       // if (authPassword) {
       //   const tokenIs = jwt.sign(email, secret, { expiresIn: '1h' });
       //   console.log(tokenIs);
