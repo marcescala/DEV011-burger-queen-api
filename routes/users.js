@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const { connect } = require('../connect');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 
-const { getUsers, postUsers, getUsersUid } = require('../controller/users');
+const { getUsers, postUsers, getUsersUid, putUsers } = require('../controller/users');
 
 const initAdminUser = async (app, next) => {
   const { adminEmail, adminPassword } = app.get('config');
@@ -26,6 +26,7 @@ const initAdminUser = async (app, next) => {
 
     if (!adminUserExists) {
       await usersCollection.insertOne(adminUser);
+      console.log('admin creado');
     } else {
       console.error('El  administrador ya existe');
     }
@@ -110,13 +111,9 @@ module.exports = (app, next) => {
 
   app.get('/users/:uid', requireAdmin, getUsersUid);
 
-  app.post('/users', requireAdmin, postUsers, (req, resp, next) => {
-    // TODO: Implement the route to add new users
-    console.log('aca esta el post');
-    resp.json({ ok: '1' });
-  });
+  app.post('/users', requireAdmin, postUsers);
 
-  app.put('/users/:uid', requireAuth, (req, resp, next) => {});
+  app.put('/users/:uid', requireAuth, putUsers, (req, resp, next) => {});
 
   app.delete('/users/:uid', requireAuth, (req, resp, next) => {});
 

@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 
 module.exports = (secret) => (req, resp, next) => {
   const { authorization } = req.headers;
-  console.log(req.headers);
 
   if (!authorization) {
     return next();
@@ -15,7 +14,7 @@ module.exports = (secret) => (req, resp, next) => {
   }
 
   jwt.verify(token, secret, (err, decodedToken) => {
-    console.log('esta decodificado midelware', decodedToken.uid);
+
     if (err) {
       return next(403);
     }
@@ -30,7 +29,6 @@ module.exports = (secret) => (req, resp, next) => {
 
 module.exports.isAuthenticated = (req) => {
   const userId = req.userId ? req.userId.toString() : null;
-  console.log(userId, 'midelware');
   if (userId) {
     console.log('Usuario autenticado:', userId);
     return true;
