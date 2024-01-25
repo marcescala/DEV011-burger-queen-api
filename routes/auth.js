@@ -30,7 +30,7 @@ module.exports = (app, nextMain) => {
       if (authPassword) {
         const tokenIs = jwt.sign({ uid: userValid._id, email: userValid.email, role: userValid.role }, secret, { expiresIn: '1h' });
 
-        resp.json({ 'acsses token': tokenIs });
+        resp.json({ token: tokenIs });
       } else {
         console.log('el password no coincide');
         return resp.status(401).json({ error: 'el password no coincide' });
@@ -43,7 +43,7 @@ module.exports = (app, nextMain) => {
       //   resp.send.json({ token: tokenIs });
       // }
 
-      // next();
+       next();
     } catch (error) {
       console.error(error); // Imprimir el mensaje de error en la consola
       return next(500); // Enviar una respuesta de error al cliente
