@@ -25,10 +25,8 @@ module.exports = {
       const db = connect();
       const user = db.collection('user');
       
-
       const  userId = req.params.uid;
       const isObjectId = ObjectId.isValid(userId);
-     
 
       let query;
       if (isObjectId) {
@@ -39,12 +37,17 @@ module.exports = {
 
       const userData = await user.findOne(query);
       
-
       if (!userData) {
-        console.log('el ususario solicitado no existe');
         return resp.status(404).json({ error: 'el ususario solicitado no existe' });
       }
-      
+      const userDataId = userData._id;
+     
+      if (req.userRole !== 'admin') {
+        if(req.userId !== userDataId.toString()) {
+          return resp.status(403).json({ error: 'No tienes permiso' });
+        };
+      }
+
       delete userData.password;
       resp.json(userData);
     } catch (error) {
@@ -58,13 +61,11 @@ module.exports = {
 
      // validar si escribio correo y password
      if (!email || !password) {
-      console.log('se necesita un email y un password');
       return resp.status(400).json({ error: 'se necesita un email y un password' });
     }
     if (password.length < 5) {
       console.log(password.length);
-      console.log('debe ser un password mínimo de 6 carácteres');
-      return resp.status(400).json({ error: 'debe ser un password mínimo de 6 carácteres' });
+      return resp.status(400).json({ error: 'debe ser un password mínimo de 5 carácteres' });
     }
 
     const newUser = {
@@ -79,18 +80,15 @@ module.exports = {
       // validar si el usuario existe
       const userExist = await user.findOne({ email });
       if (userExist) {
-        console.log('ya existe el email');
         return resp.status(403).json({ error: 'ya existe el email' });
       }
      
       // validar si el correo es valido
       const regexEmail = /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/g;
       if (!regexEmail.test(email)) {
-        console.log('debe ser un email válido');
         return resp.status(400).json({ error: 'debe ser un email válido' });
       }
 
-      
       // validar si existe rol y es alguno de los tres validos
       // if (!(role === 'admin' || role === 'waiter' || role === 'chef')) {
       //   console.log('debe contener un rol válido');
@@ -101,11 +99,10 @@ module.exports = {
      
       delete newUser.password;
       resp.status(200).json(newUser);
-
       console.log('Se agrego el usuario con exito');
+
     } catch (error) {
-      console.error(error);
-      resp.status(500).json({ error: 'Error al crear un nuevo usuario' });
+      return next(500)
     }
   },
 
@@ -113,10 +110,111 @@ module.exports = {
     try {
       const db = connect();
       const user = db.collection('user');
-      const userExist = await user.findOne({ email });
+
+      const userId = req.params.uid;
+      const isObjectId = ObjectId.isValid(userId);
+
+      let query;
+      if (isObjectId) {
+        query = { _id: new ObjectId(userId) };
+      } else {
+        query = { email: userId };
+      }
+
+      const userData = await user.findOne(query);
+      console.log(userData);
+
+      
+
+      if (!userData) {
+        return resp.status(404).json({ error: 'El usuario solicitado no existe' });
+      }
+
+      const userDataId = userData._id;
+
+      // Validar permisos para actualizar
+      if (req.userId !== userDataId.toString()) {
+        console.log(req.userId, 'del body');
+        console.log(userDataId,'del token');
+        if(req.userRole !== 'admin') {
+          console.log(req.userRole, 'en el body');
+          return resp.status(403).json({ error: 'No tienes permiso para actualizar este usuario' });
+        }
+      }
+
+
+      const body = req.body;
+      console.log(body.password);
+      if (body.hasOwnProperty('password')) {
+        const hashedPassword = bcrypt.hashSync(body.password, 10);
+        body.password = hashedPassword;
+      }
+      console.log(body.password);
+
+      if (!body || Object.keys(body).length === 0) {
+        return resp.status(400).json({ error: 'Debe haber al menos una propiedad para actualizar' });
+      }
+      
+      if(req.userRole !== 'admin' && body.hasOwnProperty('role') ){
+        return resp.status(403).json({ error: 'No tienes permiso para actualizar tu role' });
+      }
+
+      const userUpdate = await user.updateOne(query, { $set: body });
+
+      resp.json({ userUpdate, message: 'El usuario ha sido actualizado' });
     } catch (error) {
-    console.error(error);
-    resp.status(500).json({ error: 'Error al crear un nuevo usuario' });
+      console.error(error);
+      return next(500);
     }
-  }
+  },
+
+  deleteUsers: async (req, resp, next) => {
+    try {
+
+      const db = connect();
+      const user = db.collection('user');
+
+      const userId = req.params.uid;
+      const isObjectId = ObjectId.isValid(userId);
+
+      let query;
+      if (isObjectId) {
+        query = { _id: new ObjectId(userId) };
+      } else {
+        query = { email: userId };
+      }
+
+      // Verifica si se encuentra el usuario antes de eliminarlo
+      const userData = await user.findOne(query);
+      console.log(userData); // Verifica si userData contiene al usuario correcto
+      if(!userData){
+        return resp.status(404).json({ error: 'El usuario solicitado no existe' });
+      }
+
+
+      const userDataId = userData._id;
+
+      if (req.userId !== userDataId.toString()) {
+        if(req.userRole !== 'admin') {
+          console.log(req.userRole, 'en el body');
+          return resp.status(403).json({ error: 'No tienes permiso para borrar el usuario' });
+        }
+      }
+
+    
+      
+
+      // Elimina al usuario
+      const userDelete = await user.deleteOne(query);
+
+      resp.json({ userDelete, message: 'El usuario ha sido borrado' });
+    } catch (error) {
+      console.error(error);
+      return next(500);
+    }
+
+
+  },
 };
+  
+

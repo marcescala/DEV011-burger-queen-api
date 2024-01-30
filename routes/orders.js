@@ -2,9 +2,10 @@ const {
   requireAuth,
 } = require('../middleware/auth');
 
+const { getOrders } = require('../controller/orders');
+
 module.exports = (app, nextMain) => {
-  app.get('/orders', requireAuth, (req, resp, next) => {
-  });
+  app.get('/orders', requireAuth, getOrders);
 
   app.get('/orders/:orderId', requireAuth, (req, resp, next) => {
   });
