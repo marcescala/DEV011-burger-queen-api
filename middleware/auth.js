@@ -20,6 +20,7 @@ module.exports = (secret) => (req, resp, next) => {
     }
     req.userId = decodedToken.uid;
     req.userRole = decodedToken.role;
+    req.userEmail= decodedToken.email;
     return next();
 
     // TODO: Verify user identity using `decodeToken.uid`
@@ -30,10 +31,8 @@ module.exports = (secret) => (req, resp, next) => {
 module.exports.isAuthenticated = (req) => {
   const userId = req.userId ? req.userId.toString() : null;
   if (userId) {
-    console.log('Usuario autenticado:', userId);
     return true;
   }
-  console.log('Usuario no autenticado');
   return false;
 
   // TODO: Decide based on the request information whether the user is authenticated
@@ -42,7 +41,6 @@ module.exports.isAuthenticated = (req) => {
 module.exports.isAdmin = (req) => {
   const userRole = req.userRole ? req.userRole.toString() : null;
   if (userRole === 'admin') {
-    console.log('es administrador midelware', userRole);
     return true;
   }
   return false;

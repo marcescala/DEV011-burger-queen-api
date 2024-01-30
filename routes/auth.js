@@ -15,15 +15,17 @@ module.exports = (app, nextMain) => {
       const db = connect();
       const collection = db.collection('user');
 
-      const userValid = await collection.findOne({ email });
-      console.log(userValid);
-      
-      
       if (!email || !password){
         console.log('se necesita un email y un password');
         return resp.status(400).json({ error: 'se necesita un email y un password' });
       }
 
+      const userValid = await collection.findOne({ email });
+
+      if (!userValid){
+        return resp.status(404).json({ error: 'no existe el usuario' });
+      }
+      
       const authPassword = await bcrypt.compare(password, userValid.password);
      
 
@@ -36,14 +38,8 @@ module.exports = (app, nextMain) => {
         return resp.status(401).json({ error: 'el password no coincide' });
       }
 
-      // 
-      // if (authPassword) {
-      //   const tokenIs = jwt.sign(email, secret, { expiresIn: '1h' });
-      //   console.log(tokenIs);
-      //   resp.send.json({ token: tokenIs });
-      // }
 
-       next();
+       // next();
     } catch (error) {
       console.error(error); // Imprimir el mensaje de error en la consola
       return next(500); // Enviar una respuesta de error al cliente

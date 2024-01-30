@@ -2,7 +2,11 @@ const bcrypt = require('bcrypt');
 const { connect } = require('../connect');
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 
-const { getUsers, postUsers, getUsersUid, putUsers } = require('../controller/users');
+const { getUsers, 
+        postUsers, 
+        getUsersUid, 
+        putUsers,
+        deleteUsers } = require('../controller/users');
 
 const initAdminUser = async (app, next) => {
   const { adminEmail, adminPassword } = app.get('config');
@@ -109,13 +113,13 @@ const initAdminUser = async (app, next) => {
 module.exports = (app, next) => {
   app.get('/users', requireAdmin, getUsers);
 
-  app.get('/users/:uid', requireAdmin, getUsersUid);
+  app.get('/users/:uid', requireAuth, getUsersUid);
 
   app.post('/users', requireAdmin, postUsers);
 
-  app.put('/users/:uid', requireAuth, putUsers, (req, resp, next) => {});
+  app.put('/users/:uid', requireAuth, putUsers);
 
-  app.delete('/users/:uid', requireAuth, (req, resp, next) => {});
+  app.delete('/users/:uid', requireAuth, deleteUsers);
 
   initAdminUser(app, next);
 };
