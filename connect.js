@@ -13,7 +13,7 @@ const client = new MongoClient(config.dbUrl, options);
  function connect() {
   try {
    // await client.connect();
-    const db = client.db('burguer_queen'); // Reemplaza <NOMBRE_DB> por el nombre del db
+    const db = client.db('burger_queen'); // Reemplaza <NOMBRE_DB> por el nombre del db
     console.log('DB conectada');
     return db;
   } catch (error) {
