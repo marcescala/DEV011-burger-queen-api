@@ -26,6 +26,7 @@ describe('GET /users', () => {
         return resp.json();
       })
       .then((json) => {
+        console.log(json);
         expect(Array.isArray(json)).toBe(true);
         expect(json.length > 0).toBe(true);
         // TODO: Check that the results are actually the "expected" user objects
@@ -241,9 +242,13 @@ describe('DELETE /users/:uid', () => {
   ));
 
   it('should delete own user', () => {
-    const credentials = { email: `foo-${Date.now()}@bar.baz`, password: '1234' };
+    const credentials = { email: `foo-${Date.now()}@bar.baz`, password: '12345' };
+    console.log(credentials.email, 'email');
     return fetchAsAdmin('/users', { method: 'POST', body: credentials })
-      .then((resp) => expect(resp.status).toBe(200))
+      .then((resp) => {
+        resp.json().then(console.log)
+        return expect(resp.status).toBe(200)
+      })
       .then(() => fetch('/login', { method: 'POST', body: credentials }))
       .then((resp) => {
         expect(resp.status).toBe(200);
@@ -258,7 +263,7 @@ describe('DELETE /users/:uid', () => {
   });
 
   it('should delete other user as admin', () => {
-    const credentials = { email: `foo-${Date.now()}@bar.baz`, password: '1234' };
+    const credentials = { email: `foo-${Date.now()}@bar.baz`, password: '12345' };
     return fetchAsAdmin('/users', { method: 'POST', body: credentials })
       .then((resp) => expect(resp.status).toBe(200))
       .then(() => fetchAsAdmin(`/users/${credentials.email}`, { method: 'DELETE' }))
