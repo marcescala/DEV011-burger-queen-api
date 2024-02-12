@@ -40,7 +40,7 @@ module.exports = {
         users: users, // Incluir la información de los usuarios en la respuesta
       };
   
-      resp.status(200).json(users, consultUsers);
+      resp.status(200).json(consultUsers);
     } catch (error) {
       console.error(error);
       resp.status(500).json({ error: 'Error al obtener la lista de usuarios' });

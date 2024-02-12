@@ -27,7 +27,7 @@ describe('POST /products', () => {
     fetchAsAdmin('/products', {
       method: 'POST',
       body: {
-        name: 'Test',
+        name: 'Testi',
         price: 5,
         image: "https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg",
         type: "Lunch"
@@ -105,20 +105,23 @@ describe('GET /products/:productid', () => {
 describe('PUT /products/:productid', () => {
   it('should fail with 401 when no auth', () => (
     fetch('/products/xxx', { method: 'PUT' })
-      .then((resp) => expect(resp.status).toBe(401))
+      .then((resp) => {
+        console.log(resp);
+        return expect(resp.status).toBe(401)})
   ));
 
   it('should fail with 403 when not admin', () => (
     fetchAsAdmin('/products', {
       method: 'POST',
       body: {
-        name: 'Test',
+        name: 'Test1',
         price: 10,
         image: "https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg",
         type: "Lunch"
       },
     })
       .then((resp) => {
+        console.log('linea 124', resp);
         expect(resp.status).toBe(200);
         return resp.json();
       })
@@ -141,31 +144,34 @@ describe('PUT /products/:productid', () => {
     fetchAsAdmin('/products', {
       method: 'POST',
       body: {
-        name: 'Test',
+        name: 'Test2',
         price: 10,
         image: "https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg",
         type: "Lunch"
       },
     })
       .then((resp) => {
+        console.log('linea 152', resp );
         expect(resp.status).toBe(200);
         return resp.json();
       })
-      .then((json) => fetchAsAdmin(`/products/${json._id}`, {
+      .then((json) => {
+        console.log('linea 156',json);
+        return fetchAsAdmin(`/products/${json._id}`, {
         method: 'PUT',
         body: { price: 'abc' },
-      }))
+      })})
       .then((resp) => expect(resp.status).toBe(400))
   ));
 
   it('should update product as admin', () => (
     fetchAsAdmin('/products', {
       method: 'POST',
-      body: { name: 'Test', price: 10 },
+      body: { name: 'Test3', price: 10 },
     })
       .then((resp) => {
         expect(resp.status).toBe(200);
-        return resp.json();
+        return resp.json(console.log);
       })
       .then((json) => fetchAsAdmin(`/products/${json._id}`, {
         method: 'PUT',
@@ -175,7 +181,9 @@ describe('PUT /products/:productid', () => {
         expect(resp.status).toBe(200);
         return resp.json();
       })
-      .then((json) => expect(json.price).toBe(20))
+      .then((json) => {
+        console.log('linea 185', json);
+        return expect(json.price).toBe(20)})
   ));
 });
 
@@ -189,7 +197,7 @@ describe('DELETE /products/:productid', () => {
     fetchAsAdmin('/products', {
       method: 'POST',
       body: {
-        name: 'Test',
+        name: 'Test4',
         price: 10,
         image: "https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg",
         type: "Lunch"
@@ -212,7 +220,7 @@ describe('DELETE /products/:productid', () => {
     fetchAsAdmin('/products', {
       method: 'POST',
       body: {
-        name: 'Test',
+        name: 'Test5',
         price: 10,
         image: "https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg",
         type: "Lunch"
