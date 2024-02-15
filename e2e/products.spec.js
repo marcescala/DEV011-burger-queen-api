@@ -27,13 +27,14 @@ describe('POST /products', () => {
     fetchAsAdmin('/products', {
       method: 'POST',
       body: {
-        name: 'Testi',
+        name: 'Test0',
         price: 5,
         image: "https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg",
         type: "Lunch"
       },
     })
       .then((resp) => {
+        // console.log(resp);
         expect(resp.status).toBe(200);
         return resp.json();
       })
@@ -106,7 +107,7 @@ describe('PUT /products/:productid', () => {
   it('should fail with 401 when no auth', () => (
     fetch('/products/xxx', { method: 'PUT' })
       .then((resp) => {
-        console.log(resp);
+        // console.log(resp);
         return expect(resp.status).toBe(401)})
   ));
 
@@ -121,7 +122,7 @@ describe('PUT /products/:productid', () => {
       },
     })
       .then((resp) => {
-        console.log('linea 124', resp);
+        // console.log('linea 124', resp);
         expect(resp.status).toBe(200);
         return resp.json();
       })
@@ -151,12 +152,11 @@ describe('PUT /products/:productid', () => {
       },
     })
       .then((resp) => {
-        console.log('linea 152', resp );
+        // console.log('linea 152', resp );
         expect(resp.status).toBe(200);
         return resp.json();
       })
       .then((json) => {
-        console.log('linea 156',json);
         return fetchAsAdmin(`/products/${json._id}`, {
         method: 'PUT',
         body: { price: 'abc' },
@@ -171,7 +171,7 @@ describe('PUT /products/:productid', () => {
     })
       .then((resp) => {
         expect(resp.status).toBe(200);
-        return resp.json(console.log);
+        return resp.json();
       })
       .then((json) => fetchAsAdmin(`/products/${json._id}`, {
         method: 'PUT',
@@ -182,7 +182,6 @@ describe('PUT /products/:productid', () => {
         return resp.json();
       })
       .then((json) => {
-        console.log('linea 185', json);
         return expect(json.price).toBe(20)})
   ));
 });

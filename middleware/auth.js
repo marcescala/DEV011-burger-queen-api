@@ -41,7 +41,7 @@ module.exports.isAuthenticated = (req) => {
 module.exports.isAdmin = (req) => {
   const userRole = req.userRole ? req.userRole.toString() : null;
   if (userRole === 'admin') {
-    console.log({userRole});
+    // console.log({userRole});
     return true;
   }
   return false;

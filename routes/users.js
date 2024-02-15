@@ -30,7 +30,7 @@ const initAdminUser = async (app, next) => {
 
     if (!adminUserExists) {
       await usersCollection.insertOne(adminUser);
-      console.log('admin creado');
+      // console.log('admin creado');
     } else {
       console.error('El  administrador ya existe');
     }

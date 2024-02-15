@@ -30,7 +30,7 @@ describe('POST /orders', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Test6',
           price: 10,
           image: "https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg",
           type: "Lunch"
@@ -39,11 +39,14 @@ describe('POST /orders', () => {
       fetchAsTestUser('/users/test@test.test'),
     ])
       .then((responses) => {
+        // console.log(responses);
         expect(responses[0].status).toBe(200);
         expect(responses[1].status).toBe(200);
         return Promise.all([responses[0].json(), responses[1].json()]);
       })
-      .then(([product, user]) => fetchAsTestUser('/orders', {
+      .then(([product, user]) => {
+        // console.log(product,user);
+        return fetchAsTestUser('/orders', {
         method: 'POST',
         body: { 
           userId: user._id,
@@ -56,18 +59,22 @@ describe('POST /orders', () => {
           ],
           status: "pending",
         },
-      }))
+       
+      })})
       .then((resp) => {
+        console.log(resp);
         expect(resp.status).toBe(200);
         return resp.json();
       })
       .then((json) => {
+        console.log(json);
         expect(typeof json._id).toBe('string');
         expect(json.client).toBe('client');
         expect(typeof json.dateEntry).toBe('string');
+        console.log(json.dateEntry);
         expect(Array.isArray(json.products)).toBe(true);
         expect(json.products.length).toBe(1);
-        expect(json.products[0].product.name).toBe('Test');
+        expect(json.products[0].product.name).toBe('Test6');
         expect(json.products[0].product.price).toBe(10);
       })
   ));
@@ -77,7 +84,7 @@ describe('POST /orders', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Test7',
           price: 25,
           image: "https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg",
           type: "Lunch"
@@ -86,6 +93,7 @@ describe('POST /orders', () => {
       fetchAsTestUser('/users/test@test.test'),
     ])
       .then((responses) => {
+        // console.log(responses);
         expect(responses[0].status).toBe(200);
         expect(responses[1].status).toBe(200);
         return Promise.all([responses[0].json(), responses[1].json()]);
@@ -105,6 +113,7 @@ describe('POST /orders', () => {
         },
       }))
       .then((resp) => {
+        // console.log(resp);
         expect(resp.status).toBe(200);
         return resp.json();
       })
@@ -113,7 +122,7 @@ describe('POST /orders', () => {
         expect(typeof json.dateEntry).toBe('string');
         expect(Array.isArray(json.products)).toBe(true);
         expect(json.products.length).toBe(1);
-        expect(json.products[0].product.name).toBe('Test');
+        expect(json.products[0].product.name).toBe('Test7');
         expect(json.products[0].product.price).toBe(25);
       })
   ));
@@ -130,7 +139,7 @@ describe('GET /orders', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Test8',
           price: 10,
           image: "https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg",
           type: "Lunch"
@@ -139,6 +148,7 @@ describe('GET /orders', () => {
       fetchAsTestUser('/users/test@test.test'),
     ])
       .then((responses) => {
+        // console.log(responses);
         expect(responses[0].status).toBe(200);
         expect(responses[1].status).toBe(200);
         return Promise.all([responses[0].json(), responses[1].json()]);
@@ -175,6 +185,7 @@ describe('GET /orders', () => {
           }),
         ])
           .then((responses) => {
+            // console.log(responses);
             expect(responses[0].status).toBe(200);
             expect(responses[1].status).toBe(200);
             return fetchAsTestUser('/orders');
@@ -201,7 +212,7 @@ describe('GET /orders', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Test9',
           price: 10,
           image: "https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg",
           type: "Lunch"
@@ -210,6 +221,7 @@ describe('GET /orders', () => {
       fetchAsTestUser('/users/test@test.test'),
     ])
       .then((responses) => {
+        // console.log(responses);
         expect(responses[0].status).toBe(200);
         expect(responses[1].status).toBe(200);
         return Promise.all([responses[0].json(), responses[1].json()]);
@@ -246,6 +258,7 @@ describe('GET /orders', () => {
           }),
         ])
           .then((responses) => {
+            // console.log('258', responses);
             expect(responses[0].status).toBe(200);
             expect(responses[1].status).toBe(200);
             return fetchAsAdmin('/orders');
@@ -284,7 +297,7 @@ describe('GET /orders/:orderId', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Test10',
           price: 99,
           image: "https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg",
           type: "Lunch"
@@ -322,7 +335,7 @@ describe('GET /orders/:orderId', () => {
       })
       .then((json) => {
         expect(json.products.length).toBe(1);
-        expect(json.products[0].product.name).toBe('Test');
+        expect(json.products[0].product.name).toBe('Test10');
         expect(json.products[0].product.price).toBe(99);
       })
   ));
@@ -332,7 +345,7 @@ describe('GET /orders/:orderId', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Test11',
           price: 99,
           image: "https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg",
           type: "Lunch"
@@ -370,8 +383,8 @@ describe('GET /orders/:orderId', () => {
       })
       .then((json) => {
         expect(json.products.length).toBe(1);
-        expect(json.products[0].product.name).toBe('Test');
-        expect(json.products[0].product.price).toBe(10);
+        expect(json.products[0].product.name).toBe('Test11');
+        expect(json.products[0].product.price).toBe(99);
       })
   ));
 });
@@ -395,7 +408,7 @@ describe('PUT /orders/:orderId', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Test12',
           price: 99,
           image: "https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg",
           type: "Lunch"
@@ -437,7 +450,7 @@ describe('PUT /orders/:orderId', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Test13',
           price: 99,
           image: "https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg",
           type: "Lunch"
@@ -480,7 +493,7 @@ describe('PUT /orders/:orderId', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Test14',
           price: 99,
           image: "https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg",
           type: "Lunch"
@@ -645,7 +658,7 @@ describe('DELETE /orders/:orderId', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Testi',
           price: 99,
           image: "https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg",
           type: "Lunch"
@@ -658,7 +671,10 @@ describe('DELETE /orders/:orderId', () => {
         expect(responses[1].status).toBe(200);
         return Promise.all([responses[0].json(), responses[1].json()]);
       })
-      .then(([product, user]) => fetchAsTestUser('/orders', {
+      .then(([product, user]) => {
+        console.log(product, user);
+        return fetchAsTestUser('/orders', {
+        
         method: 'POST',
         body: {
           userId: user._id,
@@ -671,7 +687,7 @@ describe('DELETE /orders/:orderId', () => {
           ],
           status: "pending",           
         },
-      }))
+      })})
       .then((resp) => {
         expect(resp.status).toBe(200);
         return resp.json();
