@@ -17,10 +17,6 @@ module.exports = {
     }
 
     try {
-      // const dataProducts = db.collection("product");
-      // console.log("este es producto", products);
-      // const product = await dataProducts.findOne({ name: products });
-      // console.log(product);
 
       const newOrder = {
         userId,
@@ -31,7 +27,7 @@ module.exports = {
       };
 
       const orders = db.collection("order");
-      // const orderExist = await orders.findOne({ client });
+      
       await orders.insertOne(newOrder);
 
       resp.status(200).json(newOrder);
@@ -48,9 +44,9 @@ module.exports = {
     try {
       const order = db.collection("order");
 
-      const orders = await order.find({}).toArray();
+      const ordersData = await order.find({}).toArray();
 
-      resp.json(orders);
+      resp.json(ordersData);
     } catch (error) {
       console.error(error);
       resp.status(500).json({ error: "Error al obtener la lista de ordenes" });
@@ -89,10 +85,9 @@ module.exports = {
 
   putOrders: async (req, resp, next) => {
     try {
-      const orders = db.collection("order");
-      const ordersId = req.params.ordersId;
-      // console.log({ orders });
-      // console.log({ ordersId });
+      const order = db.collection("order");
+      const ordersId = req.params.orderId;
+      console.log({ ordersId });
 
       if (!/^[0-9a-fA-F]{24}$/.test(ordersId)) {
         return resp
@@ -101,10 +96,10 @@ module.exports = {
       }
 
       let query = { _id: new ObjectId(ordersId) };
-      // console.log({ query });
+      console.log({ query });
 
-      const orderData = await orders.findOne(query);
-      // console.log({ orderData });
+      const orderData = await order.findOne(query);
+      console.log({ orderData });
 
       if (!orderData) {
         return resp
@@ -113,7 +108,7 @@ module.exports = {
       }
 
       const body = req.body;
-      // console.log({ body });
+      console.log({ body });
 
       if (!body || Object.keys(body).length === 0) {
         return resp
@@ -121,17 +116,36 @@ module.exports = {
           .json({ error: "Debe haber al menos una propiedad para actualizar" });
       }
 
-      const orderUpdate = await orders.updateOne(query, { $set: body });
-      // console.log({ orderUpdate });
-      const updatedOrder = await orders.findOne(query);
+      if (
+        !(
+          body.status === "pending" ||
+          body.status === "canceled" ||
+          body.status === "preparing" ||
+          body.status === "delivering" ||
+          body.status === "delivered"
+        )
+      ) {
+        console.log("debe contener un status válido");
+        return resp
+          .status(400)
+          .json({ error: "debe contener un status válido" });
+      }
+
+      if (body.status === "delivered") {
+        body.dateProcessed = new Date();
+      }
+
+      await order.updateOne(query, { $set: body });
+      const updatedOrder = await order.findOne(query);
       resp.status(200).json(updatedOrder);
+
     } catch (error) {
       console.error(error);
       resp.status(500).json({ error: "Error al actualizar la ordén" });
     }
   },
 
-  deleteProducts: async (req, resp, next) => {
+  deleteOrders: async (req, resp, next) => {
     try {
       const orders = db.collection("order");
       const orderId = req.params.orderId;

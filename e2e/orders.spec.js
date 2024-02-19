@@ -62,16 +62,15 @@ describe('POST /orders', () => {
        
       })})
       .then((resp) => {
-        console.log(resp);
+        // console.log(resp);
         expect(resp.status).toBe(200);
         return resp.json();
       })
       .then((json) => {
-        console.log(json);
+        // console.log(json);
         expect(typeof json._id).toBe('string');
         expect(json.client).toBe('client');
         expect(typeof json.dateEntry).toBe('string');
-        console.log(json.dateEntry);
         expect(Array.isArray(json.products)).toBe(true);
         expect(json.products.length).toBe(1);
         expect(json.products[0].product.name).toBe('Test6');
@@ -439,9 +438,13 @@ describe('PUT /orders/:orderId', () => {
         expect(resp.status).toBe(200);
         return resp.json();
       })
-      .then((json) => fetchAsTestUser(`/orders/${json._id}`))
+      .then((json) => {
+        // console.log(json);
+        return fetchAsTestUser(`/orders/${json._id}`)})
       .then((resp) => resp.json())
-      .then((json) => fetchAsAdmin(`/orders/${json._id}`, { method: 'PUT' }))
+      .then((json) => {
+        // console.log(json);
+        return fetchAsAdmin(`/orders/${json._id}`, { method: 'PUT' })})
       .then((resp) => expect(resp.status).toBe(400))
   ));
 
@@ -593,7 +596,7 @@ describe('PUT /orders/:orderId', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Test',
+          name: 'Test15',
           price: 99,
           image: "https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg",
           type: "Lunch"
@@ -658,7 +661,7 @@ describe('DELETE /orders/:orderId', () => {
       fetchAsAdmin('/products', {
         method: 'POST',
         body: {
-          name: 'Testi',
+          name: 'Test16',
           price: 99,
           image: "https://github.com/Laboratoria/bootcamp/tree/main/projects/04-burger-queen-api/resources/images/water.jpg",
           type: "Lunch"
@@ -672,7 +675,7 @@ describe('DELETE /orders/:orderId', () => {
         return Promise.all([responses[0].json(), responses[1].json()]);
       })
       .then(([product, user]) => {
-        console.log(product, user);
+        // console.log(product, user);
         return fetchAsTestUser('/orders', {
         
         method: 'POST',
