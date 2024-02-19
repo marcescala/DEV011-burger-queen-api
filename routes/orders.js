@@ -2,7 +2,7 @@ const {
   requireAuth,
 } = require('../middleware/auth');
 
-const { getOrders, postOrders, getOrdersId, putOrders, deleteProducts } = require('../controller/orders');
+const { getOrders, postOrders, getOrdersId, putOrders, deleteOrders } = require('../controller/orders');
 
 module.exports = (app, nextMain) => {
   app.get('/orders', requireAuth, getOrders);
@@ -13,7 +13,7 @@ module.exports = (app, nextMain) => {
 
   app.put('/orders/:orderId', requireAuth, putOrders);
 
-  app.delete('/orders/:orderId', requireAuth, deleteProducts);
+  app.delete('/orders/:orderId', requireAuth, deleteOrders);
 
   nextMain();
 };

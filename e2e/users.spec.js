@@ -16,7 +16,9 @@ describe('GET /users', () => {
 
   it('should fail with 403 when not admin', () => (
     fetchAsTestUser('/users')
-      .then((resp) => expect(resp.status).toBe(403))
+      .then((resp) => {
+        console.log(resp);
+        return expect(resp.status).toBe(403)})
   ));
 
   it('should get users', () => (
@@ -39,7 +41,8 @@ describe('GET /users', () => {
         expect(resp.status).toBe(200);
         return resp.json();
       })
-      .then(({ json }) => {
+      .then(( json ) => {
+        console.log({json});
         expect(Array.isArray(json)).toBe(true);
         expect(json.length).toBe(1);
         expect(json[0]).toHaveProperty('_id');
@@ -243,7 +246,7 @@ describe('DELETE /users/:uid', () => {
 
   it('should delete own user', () => {
     const credentials = { email: `foo-${Date.now()}@bar.baz`, password: '12345' };
-    console.log(credentials.email, 'email');
+    // console.log(credentials.email, 'email');
     return fetchAsAdmin('/users', { method: 'POST', body: credentials })
       .then((resp) => {
         resp.json().then(console.log)
