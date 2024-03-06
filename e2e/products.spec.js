@@ -56,6 +56,7 @@ describe('GET /products', () => {
         return resp.json();
       })
       .then((json) => {
+        console.log(json);
         expect(Array.isArray(json)).toBe(true);
         json.forEach((product) => {
           expect(typeof product._id).toBe('string');
@@ -81,6 +82,7 @@ describe('GET /products/:productid', () => {
         return resp.json();
       })
       .then((json) => {
+        // console.log(json);
         expect(Array.isArray(json)).toBe(true);
         expect(json.length > 0).toBe(true);
         json.forEach((product) => {

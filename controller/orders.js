@@ -1,6 +1,7 @@
 const { connect } = require("../connect");
 const { ObjectId } = require("mongodb");
 const db = connect();
+const orders = db.collection("order");
 
 module.exports = {
   postOrders: async (req, resp, next) => {
@@ -17,7 +18,6 @@ module.exports = {
     }
 
     try {
-
       const newOrder = {
         userId,
         client,
@@ -26,8 +26,8 @@ module.exports = {
         dateEntry: new Date(),
       };
 
-      const orders = db.collection("order");
-      
+      // const orders = db.collection("order");
+
       await orders.insertOne(newOrder);
 
       resp.status(200).json(newOrder);
@@ -42,9 +42,9 @@ module.exports = {
 
   getOrders: async (req, resp, next) => {
     try {
-      const order = db.collection("order");
+      // const order = db.collection("order");
 
-      const ordersData = await order.find({}).toArray();
+      const ordersData = await orders.find({}).toArray();
 
       resp.json(ordersData);
     } catch (error) {
@@ -55,7 +55,7 @@ module.exports = {
 
   getOrdersId: async (req, resp, next) => {
     try {
-      const order = db.collection("order");
+      // const order = db.collection("order");
       const ordersId = req.params.orderId;
 
       if (!/^[0-9a-fA-F]{24}$/.test(ordersId)) {
@@ -67,7 +67,7 @@ module.exports = {
       let query = { _id: new ObjectId(ordersId) };
       // console.log(query);
 
-      const orderData = await order.findOne(query);
+      const orderData = await orders.findOne(query);
       // console.log(orderData);
 
       if (!orderData) {
@@ -85,9 +85,9 @@ module.exports = {
 
   putOrders: async (req, resp, next) => {
     try {
-      const order = db.collection("order");
+      // const order = db.collection("order");
       const ordersId = req.params.orderId;
-      console.log({ ordersId });
+      // console.log({ ordersId });
 
       if (!/^[0-9a-fA-F]{24}$/.test(ordersId)) {
         return resp
@@ -96,10 +96,10 @@ module.exports = {
       }
 
       let query = { _id: new ObjectId(ordersId) };
-      console.log({ query });
+      // console.log({ query });
 
-      const orderData = await order.findOne(query);
-      console.log({ orderData });
+      const orderData = await orders.findOne(query);
+      // console.log({ orderData });
 
       if (!orderData) {
         return resp
@@ -108,7 +108,7 @@ module.exports = {
       }
 
       const body = req.body;
-      console.log({ body });
+      // console.log({ body });
 
       if (!body || Object.keys(body).length === 0) {
         return resp
@@ -135,10 +135,9 @@ module.exports = {
         body.dateProcessed = new Date();
       }
 
-      await order.updateOne(query, { $set: body });
-      const updatedOrder = await order.findOne(query);
+      await orders.updateOne(query, { $set: body });
+      const updatedOrder = await orders.findOne(query);
       resp.status(200).json(updatedOrder);
-
     } catch (error) {
       console.error(error);
       resp.status(500).json({ error: "Error al actualizar la ordén" });
@@ -147,7 +146,7 @@ module.exports = {
 
   deleteOrders: async (req, resp, next) => {
     try {
-      const orders = db.collection("order");
+      // const orders = db.collection("order");
       const orderId = req.params.orderId;
       // console.log(orderId);
 
