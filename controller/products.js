@@ -1,13 +1,14 @@
 const { connect } = require("../connect");
 const { ObjectId } = require("mongodb");
 const db = connect();
+const products = db.collection("product");
 
 module.exports = {
   postProducts: async (req, resp, next) => {
     const { name, price, image, type } = req.body;
 
     try {
-      const products = db.collection("product");
+      // const products = db.collection("product");
       // validar si el producto existe
       const productExist = await products.findOne({ name });
       if (productExist) {
@@ -24,7 +25,7 @@ module.exports = {
         price,
         image,
         type,
-        dateEntry: new Date()
+        dateEntry: new Date(),
       };
       // console.log(newProduct);
 
@@ -33,7 +34,7 @@ module.exports = {
       resp.status(200).json(newProduct);
       console.log("Se agrego el producto con exito");
     } catch (error) {
-      console.log(error)
+      console.log(error);
       resp.status(500).json({ error: "Error al crear el producto" });
     }
   },
@@ -41,24 +42,32 @@ module.exports = {
   getProducts: async (req, resp, next) => {
     try {
       // const db = connect();
-      const products = db.collection("product");
-
       // Obtener todos los usuarios de la colección
-      const productsAll = await products.find({}).toArray();
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query._limit) || 10;
+      const startIndex = (page - 1) * limit;
 
-      resp.json(productsAll);
+      const productsAll = await products
+        .find({})
+        .skip(startIndex)
+        .limit(limit)
+        .toArray();
+
+      resp.status(200).json(productsAll);
 
       // TODO: Implement the necessary function to fetch the `users` collection or table
     } catch (error) {
       console.error(error);
-      resp.status(500).json({ error: "Error al obtener la lista de productos" });
+      resp
+        .status(500)
+        .json({ error: "Error al obtener la lista de productos" });
     }
   },
 
   getProductsId: async (req, resp, next) => {
     try {
       // const db = connect();
-      const products = db.collection("product");
+      // const products = db.collection("product");
       const productsId = req.params.productId;
 
       if (!/^[0-9a-fA-F]{24}$/.test(productsId)) {
@@ -77,7 +86,6 @@ module.exports = {
       }
 
       resp.json(productData);
-
     } catch (error) {
       console.error(error);
       resp.status(500).json({ error: "Error al obtener el producto" });
@@ -86,7 +94,7 @@ module.exports = {
 
   putProducts: async (req, resp, next) => {
     try {
-      const products = db.collection("product");
+      // const products = db.collection("product");
       const productsId = req.params.productId;
 
       if (!/^[0-9a-fA-F]{24}$/.test(productsId)) {
@@ -133,7 +141,7 @@ module.exports = {
 
   deleteProducts: async (req, resp, next) => {
     try {
-      const products = db.collection("product");
+      // const products = db.collection("product");
       const productsId = req.params.productId;
 
       if (!/^[0-9a-fA-F]{24}$/.test(productsId)) {

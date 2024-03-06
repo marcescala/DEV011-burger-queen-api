@@ -20,7 +20,7 @@ module.exports = (secret) => (req, resp, next) => {
     }
     req.userId = decodedToken.uid;
     req.userRole = decodedToken.role;
-    req.userEmail= decodedToken.email;
+    req.userEmail = decodedToken.email;
     return next();
 
     // TODO: Verify user identity using `decodeToken.uid`

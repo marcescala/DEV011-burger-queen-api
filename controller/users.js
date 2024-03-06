@@ -26,7 +26,7 @@ module.exports = {
         users: users, // Incluir la información de los usuarios en la respuesta
       };
 
-      if (limit < 10) {
+      if (limit) {
         resp.status(200).json(Object.values(users));
       } else {
         resp.status(200).json(Object.values(consultUsers));
@@ -228,7 +228,9 @@ module.exports = {
       // Elimina al usuario
       const userDelete = await user.deleteOne(query);
 
-      resp.status(200).json({ userDelete, message: "El usuario ha sido borrado" });
+      resp
+        .status(200)
+        .json({ userDelete, message: "El usuario ha sido borrado" });
     } catch (error) {
       console.error(error);
       resp.status(500).json({ error: "Error al borrar el usuarios" });
